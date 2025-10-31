@@ -2,7 +2,7 @@ import {
   AfterContentInit,
   Component,
   contentChild,
-  ElementRef, ViewEncapsulation
+  ViewEncapsulation
 } from '@angular/core';
 import {HighlightDirective} from './highlight.directive'
 

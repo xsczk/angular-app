@@ -1,9 +1,10 @@
-import { Directive, ElementRef } from '@angular/core';
+import {Directive, ElementRef} from '@angular/core';
 
 @Directive({
   selector: '[highlight]',
   standalone: true,
 })
 export class HighlightDirective {
-  constructor(public el: ElementRef) {}
+  constructor(public el: ElementRef) {
+  }
 }
