@@ -5,6 +5,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import {HighlightDirective} from './highlight.directive'
+import {MyOutlet} from './outlet/my-outlet.component';
 
 @Component({
   selector: 'app-user',
@@ -20,20 +21,24 @@ import {HighlightDirective} from './highlight.directive'
         <button (click)="toggle()">Toggle highlight</button>
       </footer>
     </div>
+    <ng-template #myFragment>
+      <p>This is a fragment</p>
+    </ng-template>
+    <my-outlet [fragment]="myFragment"></my-outlet>
   `,
   styles: [
     `.highlight {
       background-color: yellow;
     }`
   ],
-  imports: [],
+  imports: [MyOutlet],
   standalone: true,
   encapsulation: ViewEncapsulation.None
 })
 export class UserComponent implements AfterContentInit {
   // explicitly read ElementRef, ensure query runs after content init
   // @ts-ignore
-  p = contentChild(HighlightDirective)
+  p = contentChild.required(HighlightDirective)
 
   on = false;
 
@@ -45,7 +50,6 @@ export class UserComponent implements AfterContentInit {
   toggle() {
     this.on = !this.on;
     const pref = this.p()
-    console.log(pref)
     if (pref && pref.el) {
       pref.el.nativeElement.classList.toggle('highlight', this.on);
     } else {
