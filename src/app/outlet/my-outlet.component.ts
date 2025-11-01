@@ -1,10 +1,11 @@
 import {
   Component,
-  computed, effect,
+  computed,
   inject,
-  input, OnChanges, SimpleChanges,
+  input,
+  OnChanges,
+  SimpleChanges,
   TemplateRef,
-  viewChild,
   ViewContainerRef
 } from '@angular/core';
 import {NgTemplateOutlet} from '@angular/common';
@@ -21,7 +22,7 @@ import {NgTemplateOutlet} from '@angular/common';
   standalone: true
 })
 
-export class MyOutlet implements OnChanges{
+export class MyOutlet implements OnChanges {
   fragment = input<TemplateRef<unknown>>()
   isAdmin = input.required<boolean>()
   adminTemplate = input<TemplateRef<unknown>>()
