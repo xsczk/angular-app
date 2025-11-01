@@ -8,16 +8,28 @@ import {
   TemplateRef,
   ViewContainerRef
 } from '@angular/core';
-import {NgTemplateOutlet} from '@angular/common';
+import {NgFor, NgIf, NgTemplateOutlet} from '@angular/common';
+import {mockItems} from '../mock/data';
 
 @Component({
   selector: 'my-outlet',
   template: `
     <button (click)="showFragment()">Show</button>
     <ng-container [ngTemplateOutlet]="profileTemplate()"></ng-container>
+    <!-- ngIf intent to remove in v22-->
+    <ng-container *ngIf="isAdmin()">
+      <h1>Admin dashboard</h1>
+    </ng-container>
+    <ng-container>
+      @for (item of mockItems; track item.description; let idx = $index) {
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.description }}</p>
+      }
+    </ng-container>
   `,
   imports: [
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    NgIf,
   ],
   standalone: true
 })
@@ -43,4 +55,6 @@ export class MyOutlet implements OnChanges {
       console.warn(`Could not create fragment from ${e}`)
     }
   }
+
+  protected readonly mockItems = mockItems;
 }
