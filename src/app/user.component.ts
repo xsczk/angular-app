@@ -24,7 +24,17 @@ import {MyOutlet} from './outlet/my-outlet.component';
     <ng-template #myFragment>
       <p>This is a fragment</p>
     </ng-template>
-    <my-outlet [fragment]="myFragment"></my-outlet>
+    <ng-template #admin>
+      <p>This is an admin</p>
+    </ng-template>
+    <ng-template #basic>
+      <p>This is a basic</p>
+    </ng-template>
+    <my-outlet [fragment]="myFragment" [isAdmin]="isAdmin"
+               [adminTemplate]="admin" [basicTemplate]="basic"></my-outlet>
+    <button (click)="showAdmin()">
+      Show {{ isAdmin ? 'basic' : 'admin' }}
+    </button>
   `,
   styles: [
     `.highlight {
@@ -41,6 +51,7 @@ export class UserComponent implements AfterContentInit {
   p = contentChild.required(HighlightDirective)
 
   on = false;
+  isAdmin = false;
 
   ngAfterContentInit(): void {
     // Debug logging to confirm the ContentChild is found at lifecycle time
@@ -55,5 +66,9 @@ export class UserComponent implements AfterContentInit {
     } else {
       console.warn('p is not available when toggle called:', this.p);
     }
+  }
+
+  showAdmin() {
+    this.isAdmin = !this.isAdmin;
   }
 }
