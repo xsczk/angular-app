@@ -8,7 +8,7 @@ import {
   TemplateRef,
   ViewContainerRef
 } from '@angular/core';
-import {NgFor, NgIf, NgTemplateOutlet} from '@angular/common';
+import {NgIf, NgTemplateOutlet} from '@angular/common';
 import {mockItems} from '../mock/data';
 
 @Component({
@@ -41,12 +41,12 @@ export class MyOutlet implements OnChanges {
   basicTemplate = input<TemplateRef<unknown>>()
   profileTemplate = computed(() =>
     this.isAdmin() ? this.adminTemplate() : this.basicTemplate())
+  protected readonly mockItems = mockItems;
   private viewContainer = inject(ViewContainerRef)
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('ngOnChanges', changes, this.profileTemplate())
   }
-
 
   showFragment() {
     try {
@@ -55,6 +55,4 @@ export class MyOutlet implements OnChanges {
       console.warn(`Could not create fragment from ${e}`)
     }
   }
-
-  protected readonly mockItems = mockItems;
 }
