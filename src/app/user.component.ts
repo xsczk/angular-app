@@ -1,14 +1,25 @@
 import {
   AfterContentInit,
   Component,
-  contentChild,
+  contentChild, OnChanges, SimpleChanges,
   ViewEncapsulation
 } from '@angular/core';
 import {HighlightDirective} from './highlight.directive'
 import {MyOutlet} from './outlet/my-outlet.component';
+import {UsersSource} from './mock/usersSource';
+import {NgFor} from '@angular/common';
+import {SelectDirective} from './select';
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
+  imports: [MyOutlet, HighlightDirective, NgFor, SelectDirective],
   selector: 'app-user',
+  standalone: true,
+  styles: [
+    `.highlight {
+      background-color: yellow;
+    }`
+  ],
   template: `
     <div class="card">
       <header>
@@ -42,17 +53,19 @@ import {MyOutlet} from './outlet/my-outlet.component';
       <input type="radio" name="colors" (click)="color='cyan'">Cyan
     </div>
     <p highlight [appHighlight]="color">Highlight me!</p>
-  `,
-  styles: [
-    `.highlight {
-      background-color: yellow;
-    }`
-  ],
-  imports: [MyOutlet, HighlightDirective],
-  standalone: true,
-  encapsulation: ViewEncapsulation.None
+    @defer (on immediate) {
+      <ul class="list"
+          *choose="let users from source">
+        <li *ngFor="let user of users">
+          {{ user }}
+        </li>
+      </ul>
+    } @loading (minimum 2000) {
+      <p>Fetching user, please wait patiently...</p>
+    }
+  `
 })
-export class UserComponent implements AfterContentInit {
+export class UserComponent implements AfterContentInit, OnChanges{
   // explicitly read ElementRef, ensure query runs after content init
   // @ts-ignore
   p = contentChild.required(HighlightDirective)
@@ -61,9 +74,15 @@ export class UserComponent implements AfterContentInit {
   isAdmin = false;
   color = 'pink'
 
+  source = new UsersSource()
+
   ngAfterContentInit(): void {
     // Debug logging to confirm the ContentChild is found at lifecycle time
     console.log('ContentChild p in ngAfterContentInit:', this.p);
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log(changes)
   }
 
   toggle() {
