@@ -35,13 +35,20 @@ import {MyOutlet} from './outlet/my-outlet.component';
     <button (click)="showAdmin()">
       Show {{ isAdmin ? 'basic' : 'admin' }}
     </button>
+    <h3>Pick a highlight color</h3>
+    <div>
+      <input type="radio" name="colors" (click)="color='lightgreen'">Green
+      <input type="radio" name="colors" (click)="color='lightblue'">Blue
+      <input type="radio" name="colors" (click)="color='cyan'">Cyan
+    </div>
+    <p highlight [appHighlight]="color">Highlight me!</p>
   `,
   styles: [
     `.highlight {
       background-color: yellow;
     }`
   ],
-  imports: [MyOutlet],
+  imports: [MyOutlet, HighlightDirective],
   standalone: true,
   encapsulation: ViewEncapsulation.None
 })
@@ -52,6 +59,7 @@ export class UserComponent implements AfterContentInit {
 
   on = false;
   isAdmin = false;
+  color = 'pink'
 
   ngAfterContentInit(): void {
     // Debug logging to confirm the ContentChild is found at lifecycle time
