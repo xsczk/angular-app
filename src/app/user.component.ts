@@ -9,10 +9,11 @@ import {MyOutlet} from './outlet/my-outlet.component';
 import {UsersSource} from './mock/usersSource';
 import {NgFor} from '@angular/common';
 import {SelectDirective} from './select';
+import {ProfileEditorComponent} from './profile-editor/profile-editor.component';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
-  imports: [MyOutlet, HighlightDirective, NgFor, SelectDirective],
+  imports: [MyOutlet, HighlightDirective, NgFor, SelectDirective, ProfileEditorComponent],
   selector: 'app-user',
   standalone: true,
   styles: [
@@ -21,6 +22,7 @@ import {SelectDirective} from './select';
     }`
   ],
   template: `
+    <profile-editor/>
     <div class="card">
       <header>
         <ng-content select="[card-title]"></ng-content>
