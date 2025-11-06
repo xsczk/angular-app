@@ -92,7 +92,8 @@ export class ProfileEditorComponent implements OnInit, OnDestroy {
   }, {
     validators: forbiddenNameValidators,
     /** bind this to zipCodeValidator to prevent from accessing property from undefined */
-    asyncValidators: [this.zipCodeValidator.validate.bind(this.zipCodeValidator)]
+    asyncValidators: [this.zipCodeValidator.validate.bind(this.zipCodeValidator)],
+    updateOn: 'blur'
   });
   private destroy$ = new Subject<void>();
 
