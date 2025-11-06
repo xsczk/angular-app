@@ -7,7 +7,7 @@ export class ZipCodeService {
 
   isValidZipCode(zipCode: string): Observable<{ valid: boolean }> {
     if (this.inValidZipCode.includes(Number(zipCode)) || isNaN(+zipCode)) {
-      console.log({zipCode})
+      /** mock service... `of` will turn the given value into an Observable */
       return of({valid: false}).pipe(delay(1000));
     } else {
       return of({valid: true}).pipe(delay(1000));

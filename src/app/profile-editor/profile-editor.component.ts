@@ -19,6 +19,7 @@ import {ZipCodeValidator} from '../directives/zip-code.directive';
         <label for="first-name">First Name: </label>
         <input id="first-name" type="text" formControlName="firstName"/>
         <label for="last-name">Last Name: </label>
+        <!-- binding class-->
         <input id="last-name" type="text" formControlName="lastName"
                [class.error]="profileForm.errors?.['forbiddenName']"/>
         @if (lastNameError) {
@@ -90,6 +91,7 @@ export class ProfileEditorComponent implements OnInit, OnDestroy {
     aliases: this.formBuilder.array([this.formBuilder.control('', Validators.required)])
   }, {
     validators: forbiddenNameValidators,
+    /** bind this to zipCodeValidator to prevent from accessing property from undefined */
     asyncValidators: [this.zipCodeValidator.validate.bind(this.zipCodeValidator)]
   });
   private destroy$ = new Subject<void>();
