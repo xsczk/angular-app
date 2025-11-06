@@ -5,9 +5,10 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import {JsonPipe} from '@angular/common';
+import {AsyncPipe, JsonPipe} from '@angular/common';
 import {Subject, takeUntil} from 'rxjs';
 import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
+import {ZipCodeValidator} from '../directives/zip-code.directive';
 
 @Component({
   selector: 'profile-editor',
@@ -19,7 +20,7 @@ import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
         <input id="first-name" type="text" formControlName="firstName"/>
         <label for="last-name">Last Name: </label>
         <input id="last-name" type="text" formControlName="lastName"
-               class="{{lastNameError ? 'error' : ''}}"/>
+               [class.error]="profileForm.errors?.['forbiddenName']"/>
         @if (lastNameError) {
           <span
             style="color: red">Last name cannot be the same as first name</span>
@@ -35,7 +36,8 @@ import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
           <label for="state">State: </label>
           <input id="state" type="text" formControlName="state"/>
           <label for="zip">Zip Code: </label>
-          <input id="zip" type="text" formControlName="zip"/>
+          <input id="zip" type="text" formControlName="zip"
+                 [class.error]="zipCodeError"/>
         </section>
       </div>
       <div formArrayName="aliases">
@@ -50,7 +52,9 @@ import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
         }
       </div>
       <p>Complete the form to enable button.</p>
-      <button type="submit" [disabled]="!profileForm.valid">Submit</button>
+      <button type="submit" [disabled]="!profileForm.valid">
+        {{ (profileForm.statusChanges | async) === 'PENDING' ? 'Checking valid zip code...' : 'Submit' }}
+      </button>
     </form>
     <p>Form Status: {{ profileForm.status }}</p>
     <p>Form Value: {{ profileForm.value | json }}</p>
@@ -59,7 +63,8 @@ import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
   `,
   imports: [
     ReactiveFormsModule,
-    JsonPipe
+    JsonPipe,
+    AsyncPipe
   ], standalone: true,
   styles: `
     .error {
@@ -70,7 +75,9 @@ import {forbiddenNameValidators} from '../directives/forbidden-name.directive';
 
 export class ProfileEditorComponent implements OnInit, OnDestroy {
   lastNameError: boolean = false;
+  zipCodeError: boolean = false;
   private formBuilder = inject(NonNullableFormBuilder)
+  private zipCodeValidator = inject(ZipCodeValidator)
   profileForm = this.formBuilder.group({
     firstName: ['Nghia', Validators.required],
     lastName: [''],
@@ -81,7 +88,10 @@ export class ProfileEditorComponent implements OnInit, OnDestroy {
       zip: [''],
     }),
     aliases: this.formBuilder.array([this.formBuilder.control('', Validators.required)])
-  }, {validators: forbiddenNameValidators});
+  }, {
+    validators: forbiddenNameValidators,
+    asyncValidators: [this.zipCodeValidator.validate.bind(this.zipCodeValidator)]
+  });
   private destroy$ = new Subject<void>();
 
   get aliases() {
@@ -98,6 +108,7 @@ export class ProfileEditorComponent implements OnInit, OnDestroy {
       .subscribe(status => {
         console.log({status, errors: this.profileForm.errors});
         this.lastNameError = !!(this.profileForm.errors?.['forbiddenName']);
+        this.zipCodeError = !!(this.profileForm.errors?.['validZipCode']);
       })
   }
 
